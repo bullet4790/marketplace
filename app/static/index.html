@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Product Management</title>
+</head>
+<body>
+    <h1>Product Management</h1>
+
+    <h2>Products</h2>
+    <div id="product-list"></div>
+
+    <script>
+        // Fetch all products
+        const baseUrl = `${window.location.protocol}//${window.location.host}`;
+        const productsUrl = `${baseUrl}/products`;
+        fetch(productsUrl)
+            .then(response => response.json())
+            .then(data => {
+                const productList = document.getElementById('product-list');
+                data.forEach(product => {
+                    const productItem = document.createElement('div');
+                    productItem.textContent = `${product.name}: $${product.price}`;
+                    productList.appendChild(productItem);
+                });
+            })
+            .catch(error => console.error('Error fetching products:', error));
+    </script>
+</body>
+</html>
