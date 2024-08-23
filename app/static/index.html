@@ -3,26 +3,44 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Product Management</title>
+    <title>Product List</title>
 </head>
 <body>
-    <h1>Product Management</h1>
-
-    <h2>Products</h2>
-    <div id="product-list"></div>
+    <h1>Product List</h1>
+    <table border="1">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Name</th>
+                <th>Category</th>
+                <th>Price</th>
+                <th>Description</th>
+            </tr>
+        </thead>
+        <tbody id="product-table-body">
+            <!-- Products will be inserted here by JavaScript -->
+        </tbody>
+    </table>
 
     <script>
-        // Fetch all products
-        const baseUrl = `${window.location.protocol}//${window.location.host}`;
-        const productsUrl = `${baseUrl}/products`;
-        fetch(productsUrl)
+        // Определение базового URL сервера
+        const serverUrl = `${window.location.protocol}//${window.location.host}`;
+
+        // Запрос к серверу для получения данных о продуктах
+        fetch(`${serverUrl}/products`)
             .then(response => response.json())
             .then(data => {
-                const productList = document.getElementById('product-list');
+                const tableBody = document.getElementById('product-table-body');
                 data.forEach(product => {
-                    const productItem = document.createElement('div');
-                    productItem.textContent = `${product.name}: $${product.price}`;
-                    productList.appendChild(productItem);
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${product.id}</td>
+                        <td>${product.name || ''}</td>
+                        <td>${product.category ? product.category.name : ''}</td>
+                        <td>${product.price || ''}</td>
+                        <td>${product.description || ''}</td>
+                    `;
+                    tableBody.appendChild(row);
                 });
             })
             .catch(error => console.error('Error fetching products:', error));
