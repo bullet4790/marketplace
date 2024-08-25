@@ -43,17 +43,34 @@ def test_create_product():
     assert data["name"] == "Test Product"
     assert data["price"] == 100
 
-def test_read_product():
-    # Сначала создаем продукт
+def test_read_products():
+    # Сначала создаем несколько продуктов
     client.post(
+        "/products/",
+        json={"name": "Product 1", "price": 100, "description": "First product", "category": "Category 1"}
+    )
+    client.post(
+        "/products/",
+        json={"name": "Product 2", "price": 200, "description": "Second product", "category": "Category 2"}
+    )
+    response = client.get("/products/?skip=0&limit=2")
+    assert response.status_code == 200
+    data = response.json()
+    assert len(data) == 2
+    assert data[0]["name"] == "Product 1"
+    assert data[1]["name"] == "Product 2"
+
+def test_read_product():
+    response = client.post(
         "/products/",
         json={"name": "Test Product", "price": 100, "description": "A test product", "category": "Test"}
     )
-    # Затем проверяем его получение
-    response = client.get("/products/1")
+    product_id = response.json()["id"]
+    response = client.get(f"/products/{product_id}")
     assert response.status_code == 200
     data = response.json()
     assert data["name"] == "Test Product"
+    assert data["price"] == 100
 
 def test_update_product():
     # Сначала создаем продукт
@@ -99,3 +116,4 @@ def test_filter_products():
     data = response.json()
     assert len(data) == 1
     assert data[0]["name"] == "Test Product 1"
+
